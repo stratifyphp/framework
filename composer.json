@@ -1,0 +1,25 @@
+{
+    "name": "stratify/framework",
+    "license": "MIT",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Stratify\\Framework\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Stratify\\Framework\\Test\\": "tests"
+        }
+    },
+    "require": {
+        "stratify/http": "@dev",
+        "php-di/php-di": "^5.0",
+        "stratify/router": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.0@dev"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
