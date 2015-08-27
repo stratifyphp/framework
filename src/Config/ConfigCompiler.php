@@ -4,7 +4,6 @@ namespace Stratify\Framework\Config;
 
 use Interop\Container\ContainerInterface;
 use Stratify\Http\Middleware\MiddlewareStack;
-use Stratify\Router\Route\RouteArray;
 use Stratify\Router\Router;
 
 /**
@@ -47,6 +46,6 @@ class ConfigCompiler
     {
         $invoker = $this->container->get('router.invoker');
 
-        return new Router(new RouteArray($routes), $invoker);
+        return new Router($routes, $invoker);
     }
 }
