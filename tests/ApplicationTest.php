@@ -138,7 +138,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $definitions = [
             EmitterInterface::class => $this->responseEmitter,
         ];
-        $app = new Application($definitions, $http);
+        $app = new Application($http, $definitions);
         $app->runHttp($request);
         return $app;
     }

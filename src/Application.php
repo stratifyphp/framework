@@ -27,7 +27,7 @@ class Application
      * @param string|array $definitions
      * @param callable     $http
      */
-    public function __construct($definitions, $http)
+    public function __construct($http, $definitions = null)
     {
         $this->container = $this->createContainer($definitions);
 
@@ -44,11 +44,13 @@ class Application
         $app->run($request);
     }
 
-    private function createContainer($definitions) : Container
+    private function createContainer($definitions = null) : Container
     {
         $builder = new ContainerBuilder;
         $builder->addDefinitions(__DIR__ . '/config.php');
-        $builder->addDefinitions($definitions);
+        if ($definitions !== null) {
+            $builder->addDefinitions($definitions);
+        }
 
         return $builder->build();
     }
