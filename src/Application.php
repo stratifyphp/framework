@@ -5,6 +5,7 @@ namespace Stratify\Framework;
 use DI\Container;
 use DI\ContainerBuilder;
 use Psr\Http\Message\ServerRequestInterface;
+use Stratify\Framework\Config\ConfigCompiler;
 use Zend\Diactoros\Response\EmitterInterface;
 
 /**
@@ -29,7 +30,10 @@ class Application
     public function __construct($definitions, $http)
     {
         $this->container = $this->createContainer($definitions);
-        $this->http = $http;
+
+        /** @var ConfigCompiler $configCompiler */
+        $configCompiler = $this->container->get(ConfigCompiler::class);
+        $this->http = $configCompiler->compile($http);
     }
 
     public function runHttp(ServerRequestInterface $request = null)

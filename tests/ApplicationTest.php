@@ -77,10 +77,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
             }),
         ]);
 
-        $this->runHttp($http, new ServerRequest([], [], '/', 'GET'));
+        $app = $this->runHttp($http, new ServerRequest([], [], '/', 'GET'));
         $this->assertEquals('Home', $this->responseEmitter->output);
 
-        $this->runHttp($http, new ServerRequest([], [], '/about', 'GET'));
+        $app->runHttp(new ServerRequest([], [], '/about', 'GET'));
         $this->assertEquals('About', $this->responseEmitter->output);
     }
 
@@ -115,6 +115,22 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->runHttp($http, new ServerRequest([], [], '/api/hello', 'GET'));
         $this->assertEquals("Auth check\nHello", $this->responseEmitter->output);
+    }
+
+    /**
+     * @test
+     */
+    public function injects_route_parameters_in_controllers()
+    {
+        $http = router([
+            '/{name}' => function ($name, ResponseInterface $response) {
+                $response->getBody()->write('Hello ' . $name);
+                return $response;
+            },
+        ]);
+
+        $this->runHttp($http, new ServerRequest([], [], '/john', 'GET'));
+        $this->assertEquals('Hello john', $this->responseEmitter->output);
     }
 
     private function runHttp($http, ServerRequestInterface $request = null)

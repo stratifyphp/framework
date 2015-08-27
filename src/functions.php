@@ -2,15 +2,14 @@
 
 namespace Stratify\Framework;
 
-use Stratify\Http\Middleware\MiddlewareStack;
-use Stratify\Router\Router;
+use Stratify\Framework\Config\Node;
 
 function stack(array $middlewares)
 {
-    return new MiddlewareStack($middlewares);
+    return new Node('stack', $middlewares);
 }
 
 function router(array $routes)
 {
-    return Router::fromArray($routes);
+    return new Node('router', $routes);
 }
