@@ -13,9 +13,9 @@ use Puli\UrlGenerator\Api\UrlGenerator;
 class ContainerFactory
 {
     /**
-     * @param string|array $config
+     * @param array $modules Array of definition files/arrays
      */
-    public static function create($config = []) : ContainerInterface
+    public static function create(array $modules) : ContainerInterface
     {
         $builder = new ContainerBuilder;
 
@@ -25,20 +25,32 @@ class ContainerFactory
         /** @var ResourceRepository $resourceRepository */
         $resourceRepository = $puli->createRepository();
         $resourceDiscovery = $puli->createDiscovery($resourceRepository);
-        $urlGenerator = $puli->createUrlGenerator($resourceDiscovery);
 
-        $builder->addDefinitions($resourceRepository->get('/stratify/config.php')->getFilesystemPath());
+        self::addModule($builder, $resourceRepository, 'stratify');
 
-        if (is_string($config)) {
-            $builder->addDefinitions($resourceRepository->get($config)->getFilesystemPath());
-            $config = [];
+        foreach ($modules as $module) {
+            self::addModule($builder, $resourceRepository, $module);
         }
 
-        $config['puli.factory'] = $puli;
-        $config[ResourceRepository::class] = $resourceRepository;
-        $config[UrlGenerator::class] = $urlGenerator;
-        $builder->addDefinitions($config);
+        $builder->addDefinitions([
+            'puli.factory' => $puli,
+            ResourceRepository::class => $resourceRepository,
+            UrlGenerator::class => $puli->createUrlGenerator($resourceDiscovery),
+        ]);
 
         return $builder->build();
+    }
+
+    private static function addModule(ContainerBuilder $builder, ResourceRepository $resources, $module)
+    {
+        if (is_string($module)) {
+            // Module name
+            $file = '/' . $module . '/config.php';
+            $builder->addDefinitions($resources->get($file)->getFilesystemPath());
+        } else {
+            // Definition array
+            assert(is_array($module));
+            $builder->addDefinitions($module);
+        }
     }
 }

@@ -5,6 +5,7 @@ namespace Stratify\Framework;
 use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Stratify\Framework\Config\ConfigCompiler;
+use Stratify\Framework\Config\Node;
 use Zend\Diactoros\Response\EmitterInterface;
 
 /**
@@ -23,12 +24,17 @@ class Application
     private $http;
 
     /**
-     * @param callable     $http
-     * @param string|array $config
+     * @param callable|Node $http
+     * @param array         $modules
+     * @param string|array  $config
      */
-    public function __construct($http, $config = [])
+    public function __construct($http, array $modules = [], $config = [])
     {
-        $this->container = ContainerFactory::create($config);
+        if (! empty($config)) {
+            $modules[] = $config;
+        }
+
+        $this->container = ContainerFactory::create($modules);
 
         /** @var ConfigCompiler $configCompiler */
         $configCompiler = $this->container->get(ConfigCompiler::class);
