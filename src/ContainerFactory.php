@@ -45,7 +45,7 @@ class ContainerFactory
     {
         if (is_string($module)) {
             // Module name
-            $file = '/' . $module . '/config.php';
+            $file = '/' . $module . '/config/config.php';
             $builder->addDefinitions($resources->get($file)->getFilesystemPath());
         } else {
             // Definition array
