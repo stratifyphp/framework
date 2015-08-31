@@ -2,7 +2,7 @@
 
 namespace Stratify\Framework\Config;
 
-use Interop\Container\ContainerInterface;
+use Invoker\InvokerInterface;
 use Stratify\Http\Middleware\MiddlewareStack;
 use Stratify\Router\Router;
 
@@ -12,13 +12,13 @@ use Stratify\Router\Router;
 class ConfigCompiler
 {
     /**
-     * @var ContainerInterface
+     * @var InvokerInterface
      */
-    private $container;
+    private $invoker;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(InvokerInterface $invoker)
     {
-        $this->container = $container;
+        $this->invoker = $invoker;
     }
 
     /**
@@ -34,18 +34,11 @@ class ConfigCompiler
 
         switch ($node->getName()) {
             case 'stack':
-                return new MiddlewareStack($subNodes);
+                return new MiddlewareStack($subNodes, $this->invoker);
             case 'router':
-                return $this->createRouter($subNodes);
+                return new Router($subNodes, $this->invoker);
             default:
                 throw new \Exception(sprintf('Unknown node of type %s', $node->getName()));
         }
-    }
-
-    private function createRouter($routes)
-    {
-        $invoker = $this->container->get('router.invoker');
-
-        return new Router($routes, $invoker);
     }
 }

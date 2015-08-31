@@ -6,6 +6,7 @@ use Invoker\Invoker;
 use Invoker\ParameterResolver\AssociativeArrayResolver;
 use Invoker\ParameterResolver\Container\TypeHintContainerResolver;
 use Invoker\ParameterResolver\ResolverChain;
+use Stratify\Framework\Config\ConfigCompiler;
 use Zend\Diactoros\Response\EmitterInterface;
 use Zend\Diactoros\Response\SapiEmitter;
 use function DI\get;
@@ -17,7 +18,10 @@ return [
 
     EmitterInterface::class => get(SapiEmitter::class),
 
-    'router.invoker' => function (ContainerInterface $c) {
+    ConfigCompiler::class => object()
+        ->constructor(get('middleware.invoker')),
+
+    'middleware.invoker' => function (ContainerInterface $c) {
         $resolvers = [
             new AssociativeArrayResolver,
             new TypeHintContainerResolver($c),
