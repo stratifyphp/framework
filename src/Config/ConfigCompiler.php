@@ -2,7 +2,7 @@
 
 namespace Stratify\Framework\Config;
 
-use Invoker\InvokerInterface;
+use Stratify\Http\Middleware\Invoker\MiddlewareInvoker;
 use Stratify\Http\Middleware\MiddlewareStack;
 use Stratify\Router\Router;
 
@@ -12,11 +12,11 @@ use Stratify\Router\Router;
 class ConfigCompiler
 {
     /**
-     * @var InvokerInterface
+     * @var MiddlewareInvoker
      */
     private $invoker;
 
-    public function __construct(InvokerInterface $invoker)
+    public function __construct(MiddlewareInvoker $invoker)
     {
         $this->invoker = $invoker;
     }
