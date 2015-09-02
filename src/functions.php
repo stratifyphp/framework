@@ -4,12 +4,16 @@ namespace Stratify\Framework;
 
 use Stratify\Framework\Config\Node;
 
-function pipe(array $middlewares)
-{
-    return new Node('pipe', $middlewares);
-}
+if (! function_exists('Stratify\Framework\pipe')) {
 
-function router(array $routes)
-{
-    return new Node('router', $routes);
+    function pipe(array $middlewares)
+    {
+        return new Node('pipe', $middlewares);
+    }
+
+    function router(array $routes)
+    {
+        return new Node('router', $routes);
+    }
+
 }
