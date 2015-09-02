@@ -6,7 +6,6 @@ use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Stratify\Framework\Config\ConfigCompiler;
 use Stratify\Framework\Config\Node;
-use Stratify\Http\Middleware\Invoker\MiddlewareInvoker;
 use Zend\Diactoros\Response\EmitterInterface;
 
 /**
@@ -44,10 +43,18 @@ class Application
 
     public function runHttp(ServerRequestInterface $request = null)
     {
-        $invoker = $this->container->get(MiddlewareInvoker::class);
+        $invoker = $this->container->get('invoker.middlewares');
         $responseEmitter = $this->container->get(EmitterInterface::class);
 
         $app = new \Stratify\Http\Application($this->http, $invoker, $responseEmitter);
         $app->run($request);
+    }
+
+    /**
+     * @return ContainerInterface
+     */
+    public function getContainer()
+    {
+        return $this->container;
     }
 }

@@ -12,15 +12,18 @@ use Psr\Http\Message\ServerRequestInterface;
 use Stratify\Http\Middleware\Invoker\MiddlewareInvoker;
 
 /**
- * Invokes middlewares with dependency injection features:
+ * Invokes controllers with dependency injection features:
  *
  * - resolves them from the container if they aren't callable
  * - passes parameters based on the parameter names
  * - do dependency injection in parameters (based on type-hints)
  *
+ * Additionally it allows controllers to return string response (which
+ * will be written to the response).
+ *
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class DiInvoker implements MiddlewareInvoker
+class ControllerInvoker implements MiddlewareInvoker
 {
     /**
      * @var ContainerInterface
@@ -57,6 +60,20 @@ class DiInvoker implements MiddlewareInvoker
         $parameters['response'] = $response;
         $parameters['next'] = $next;
 
-        return $this->invoker->call($middleware, $parameters);
+        $newResponse = $this->invoker->call($middleware, $parameters);
+
+        if (is_string($newResponse)) {
+            // Allow direct string response
+            $response->getBody()->write($newResponse);
+            $newResponse = $response;
+        } elseif (! $newResponse instanceof ResponseInterface) {
+            throw new \RuntimeException(sprintf(
+                'The controller did not return a response (expected %s, got %s)',
+                ResponseInterface::class,
+                is_object($newResponse) ? get_class($newResponse) : gettype($newResponse)
+            ));
+        }
+
+        return $newResponse;
     }
 }

@@ -14,11 +14,17 @@ class ConfigCompiler
     /**
      * @var MiddlewareInvoker
      */
-    private $invoker;
+    private $middlewareInvoker;
 
-    public function __construct(MiddlewareInvoker $invoker)
+    /**
+     * @var MiddlewareInvoker
+     */
+    private $controllerInvoker;
+
+    public function __construct(MiddlewareInvoker $middlewareInvoker, MiddlewareInvoker $controllerInvoker)
     {
-        $this->invoker = $invoker;
+        $this->middlewareInvoker = $middlewareInvoker;
+        $this->controllerInvoker = $controllerInvoker;
     }
 
     /**
@@ -34,9 +40,9 @@ class ConfigCompiler
 
         switch ($node->getName()) {
             case 'pipe':
-                return new MiddlewarePipe($subNodes, $this->invoker);
+                return new MiddlewarePipe($subNodes, $this->middlewareInvoker);
             case 'router':
-                return new Router($subNodes, $this->invoker);
+                return new Router($subNodes, $this->controllerInvoker);
             default:
                 throw new \Exception(sprintf('Unknown node of type %s', $node->getName()));
         }

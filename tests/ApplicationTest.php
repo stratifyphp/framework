@@ -6,13 +6,13 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Stratify\Framework\Application;
-use function Stratify\Framework\router;
 use Stratify\Framework\Test\Mock\FakeResponseEmitter;
-use function Stratify\Router\route;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response\EmitterInterface;
-use function Stratify\Framework\stack;
 use Zend\Diactoros\ServerRequest;
+use function Stratify\Router\route;
+use function Stratify\Framework\pipe;
+use function Stratify\Framework\router;
 
 class ApplicationTest extends \PHPUnit_Framework_TestCase
 {
@@ -42,9 +42,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function calls_middleware_stack()
+    public function calls_middleware_pipe()
     {
-        $http = stack([
+        $http = pipe([
             function (RequestInterface $request, ResponseInterface $response, callable $next) {
                 $response->getBody()->write('Hello');
                 return $next($request, $response);
@@ -89,13 +89,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
      */
     public function supports_nesting_middlewares()
     {
-        $http = stack([
+        $http = pipe([
             router([
                 '/' => function (RequestInterface $request, ResponseInterface $response) {
                     $response->getBody()->write('Home');
                     return $response;
                 },
-                '/api/{resource}' => stack([
+                '/api/{resource}' => pipe([
                     function (RequestInterface $request, ResponseInterface $response, callable $next) {
                         $response->getBody()->write("Auth check\n");
                         return $next($request, $response);
@@ -131,6 +131,21 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->runHttp($http, new ServerRequest([], [], '/john', 'GET'));
         $this->assertEquals('Hello john', $this->responseEmitter->output);
+    }
+
+    /**
+     * @test
+     */
+    public function let_router_controllers_return_string_response()
+    {
+        $http = router([
+            '/' => function () {
+                return 'Hello world!';
+            },
+        ]);
+
+        $this->runHttp($http, new ServerRequest([], [], '/', 'GET'));
+        $this->assertEquals('Hello world!', $this->responseEmitter->output);
     }
 
     private function runHttp($http, ServerRequestInterface $request = null)
