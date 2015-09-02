@@ -16,4 +16,9 @@ if (! function_exists('Stratify\Framework\pipe')) {
         return new Node('router', $routes);
     }
 
+    function prefix(array $routes)
+    {
+        return new Node('prefix', $routes);
+    }
+
 }

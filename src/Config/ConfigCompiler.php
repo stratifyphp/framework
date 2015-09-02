@@ -4,6 +4,7 @@ namespace Stratify\Framework\Config;
 
 use Stratify\Http\Middleware\Invoker\MiddlewareInvoker;
 use Stratify\Http\Middleware\MiddlewarePipe;
+use Stratify\Router\PrefixRouter;
 use Stratify\Router\Router;
 
 /**
@@ -43,6 +44,8 @@ class ConfigCompiler
                 return new MiddlewarePipe($subNodes, $this->middlewareInvoker);
             case 'router':
                 return new Router($subNodes, $this->controllerInvoker);
+            case 'prefix':
+                return new PrefixRouter($subNodes, $this->middlewareInvoker);
             default:
                 throw new \Exception(sprintf('Unknown node of type %s', $node->getName()));
         }

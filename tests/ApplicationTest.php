@@ -9,9 +9,11 @@ use Stratify\Framework\Application;
 use Stratify\Framework\Test\Mock\FakeResponseEmitter;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response\EmitterInterface;
+use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\ServerRequest;
 use function Stratify\Router\route;
 use function Stratify\Framework\pipe;
+use function Stratify\Framework\prefix;
 use function Stratify\Framework\router;
 
 class ApplicationTest extends \PHPUnit_Framework_TestCase
@@ -67,13 +69,11 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function calls_router()
     {
         $http = router([
-            '/' => function (RequestInterface $request, ResponseInterface $response) {
-                $response->getBody()->write('Home');
-                return $response;
+            '/' => function () {
+                return new HtmlResponse('Home');
             },
-            '/about' => route(function (RequestInterface $request, ResponseInterface $response) {
-                $response->getBody()->write('About');
-                return $response;
+            '/about' => route(function () {
+                return new HtmlResponse('About');
             }),
         ]);
 
@@ -82,6 +82,35 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $app->runHttp(new ServerRequest([], [], '/about', 'GET'));
         $this->assertEquals('About', $this->responseEmitter->output);
+    }
+
+    /**
+     * @test
+     */
+    public function calls_prefix_router()
+    {
+        $http = prefix([
+            '/admin' => function () {
+                return new HtmlResponse('Admin');
+            },
+            '/api' => router([
+                '/api/hello' => function () {
+                    return new HtmlResponse('Hello');
+                },
+                '/api/world' => function () {
+                    return new HtmlResponse('World');
+                },
+            ]),
+        ]);
+
+        $app = $this->runHttp($http, new ServerRequest([], [], '/admin/hello', 'GET'));
+        $this->assertEquals('Admin', $this->responseEmitter->output);
+
+        $app->runHttp(new ServerRequest([], [], '/api/hello', 'GET'));
+        $this->assertEquals('Hello', $this->responseEmitter->output);
+
+        $app->runHttp(new ServerRequest([], [], '/api/world', 'GET'));
+        $this->assertEquals('World', $this->responseEmitter->output);
     }
 
     /**
@@ -124,8 +153,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $http = router([
             '/{name}' => function ($name, ResponseInterface $response) {
-                $response->getBody()->write('Hello ' . $name);
-                return $response;
+                return new HtmlResponse('Hello ' . $name);
             },
         ]);
 
