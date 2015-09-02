@@ -3,7 +3,7 @@
 namespace Stratify\Framework\Config;
 
 use Stratify\Http\Middleware\Invoker\MiddlewareInvoker;
-use Stratify\Http\Middleware\MiddlewareStack;
+use Stratify\Http\Middleware\MiddlewarePipe;
 use Stratify\Router\Router;
 
 /**
@@ -33,8 +33,8 @@ class ConfigCompiler
         $subNodes = array_map([$this, 'compile'], $node->getSubNodes());
 
         switch ($node->getName()) {
-            case 'stack':
-                return new MiddlewareStack($subNodes, $this->invoker);
+            case 'pipe':
+                return new MiddlewarePipe($subNodes, $this->invoker);
             case 'router':
                 return new Router($subNodes, $this->invoker);
             default:

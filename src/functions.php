@@ -4,9 +4,9 @@ namespace Stratify\Framework;
 
 use Stratify\Framework\Config\Node;
 
-function stack(array $middlewares)
+function pipe(array $middlewares)
 {
-    return new Node('stack', $middlewares);
+    return new Node('pipe', $middlewares);
 }
 
 function router(array $routes)
