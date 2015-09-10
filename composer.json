@@ -16,9 +16,9 @@
         }
     },
     "require": {
-        "stratify/http": "@dev",
+        "stratify/http": "~0.1.0",
+        "stratify/router": "~0.1.0",
         "php-di/php-di": "^5.0",
-        "stratify/router": "dev-master",
         "puli/composer-plugin": "^1.0",
         "puli/repository": "^1.0",
         "puli/discovery": "^1.0",
