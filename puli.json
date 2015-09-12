@@ -18,6 +18,10 @@
             "installer": "composer",
             "env": "dev"
         },
+        "filp/whoops": {
+            "install-path": "vendor/filp/whoops",
+            "installer": "composer"
+        },
         "myclabs/deep-copy": {
             "install-path": "vendor/myclabs/deep-copy",
             "installer": "composer",
@@ -143,6 +147,10 @@
             "install-path": "vendor/sebastian/version",
             "installer": "composer",
             "env": "dev"
+        },
+        "stratify/error-handler-module": {
+            "install-path": "vendor/stratify/error-handler-module",
+            "installer": "composer"
         },
         "stratify/http": {
             "install-path": "vendor/stratify/http",
