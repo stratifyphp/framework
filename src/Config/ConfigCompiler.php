@@ -2,6 +2,7 @@
 
 namespace Stratify\Framework\Config;
 
+use Puli\Repository\Api\ResourceRepository;
 use Stratify\Http\Middleware\Invoker\MiddlewareInvoker;
 use Stratify\Http\Middleware\MiddlewarePipe;
 use Stratify\Router\PrefixRouter;
@@ -22,10 +23,19 @@ class ConfigCompiler
      */
     private $controllerInvoker;
 
-    public function __construct(MiddlewareInvoker $middlewareInvoker, MiddlewareInvoker $controllerInvoker)
-    {
+    /**
+     * @var ResourceRepository
+     */
+    private $resourceRepository;
+
+    public function __construct(
+        MiddlewareInvoker $middlewareInvoker,
+        MiddlewareInvoker $controllerInvoker,
+        ResourceRepository $resourceRepository
+    ) {
         $this->middlewareInvoker = $middlewareInvoker;
         $this->controllerInvoker = $controllerInvoker;
+        $this->resourceRepository = $resourceRepository;
     }
 
     /**
@@ -37,7 +47,19 @@ class ConfigCompiler
             return $node;
         }
 
-        $subNodes = array_map([$this, 'compile'], $node->getSubNodes());
+        $subNodes = $node->getSubNodes();
+        if (is_string($subNodes)) {
+            // Load from a file
+            $file = $this->resourceRepository->get($subNodes)->getFilesystemPath();
+            $subNodes = require $file;
+
+            if (!is_array($subNodes)) {
+                throw new \Exception(sprintf('The file %s must return an array', $file));
+            }
+        }
+
+        // Recursive compilation in the array
+        $subNodes = array_map([$this, 'compile'], $subNodes);
 
         switch ($node->getName()) {
             case 'pipe':

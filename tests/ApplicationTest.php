@@ -5,6 +5,8 @@ namespace Stratify\Framework\Test;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Puli\Repository\Api\ResourceRepository;
+use Puli\Repository\FilesystemRepository;
 use Stratify\Framework\Application;
 use Stratify\Framework\Test\Mock\FakeResponseEmitter;
 use Zend\Diactoros\Request;
@@ -176,12 +178,25 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Hello world!', $this->responseEmitter->output);
     }
 
+    /**
+     * @test
+     */
+    public function routes_can_be_defined_in_external_file_using_puli_path()
+    {
+        $http = router('/Fixture/routes.php');
+
+        $this->runHttp($http, new ServerRequest([], [], '/', 'GET'));
+        $this->assertEquals('Hello world!', $this->responseEmitter->output);
+    }
+
     private function runHttp($http, ServerRequestInterface $request = null)
     {
-        $definitions = [
+        $config = [
             EmitterInterface::class => $this->responseEmitter,
+            // Override the ResourceRepository
+            ResourceRepository::class => new FilesystemRepository(__DIR__),
         ];
-        $app = new Application($http, [], $definitions);
+        $app = new Application($http, [], $config);
         $app->runHttp($request);
         return $app;
     }

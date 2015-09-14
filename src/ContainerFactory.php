@@ -26,17 +26,17 @@ class ContainerFactory
         $resourceRepository = $puli->createRepository();
         $resourceDiscovery = $puli->createDiscovery($resourceRepository);
 
-        self::addModule($builder, $resourceRepository, 'stratify');
-
-        foreach ($modules as $module) {
-            self::addModule($builder, $resourceRepository, $module);
-        }
-
         $builder->addDefinitions([
             'puli.factory' => $puli,
             ResourceRepository::class => $resourceRepository,
             UrlGenerator::class => $puli->createUrlGenerator($resourceDiscovery),
         ]);
+
+        self::addModule($builder, $resourceRepository, 'stratify');
+
+        foreach ($modules as $module) {
+            self::addModule($builder, $resourceRepository, $module);
+        }
 
         return $builder->build();
     }

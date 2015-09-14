@@ -10,7 +10,10 @@ class Node
     private $name;
     private $subNodes = [];
 
-    public function __construct(string $name, array $subNodes)
+    /**
+     * @param array|string $subNodes
+     */
+    public function __construct(string $name, $subNodes)
     {
         $this->name = $name;
         $this->subNodes = $subNodes;
@@ -21,7 +24,10 @@ class Node
         return $this->name;
     }
 
-    public function getSubNodes() : array
+    /**
+     * @return array|string
+     */
+    public function getSubNodes()
     {
         return $this->subNodes;
     }

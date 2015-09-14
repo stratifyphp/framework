@@ -160,6 +160,11 @@
             "install-path": "vendor/stratify/router",
             "installer": "composer"
         },
+        "symfony/filesystem": {
+            "install-path": "vendor/symfony/filesystem",
+            "installer": "composer",
+            "env": "dev"
+        },
         "symfony/process": {
             "install-path": "vendor/symfony/process",
             "installer": "composer"

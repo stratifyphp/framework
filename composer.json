@@ -26,7 +26,8 @@
         "puli/url-generator": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.0@dev"
+        "phpunit/phpunit": "^5.0@dev",
+        "symfony/filesystem": "*"
     },
     "minimum-stability": "dev",
     "prefer-stable": true
