@@ -35,7 +35,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
      */
     public function calls_middleware()
     {
-        $http = function (RequestInterface $request, ResponseInterface $response) {
+        $http = function (RequestInterface $request, ResponseInterface $response, callable $next) {
             $response->getBody()->write('Hello world!');
             return $response;
         };
