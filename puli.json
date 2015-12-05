@@ -4,6 +4,9 @@
     "path-mappings": {
         "/stratify": "res"
     },
+    "config": {
+        "bootstrap-file": "vendor/autoload.php"
+    },
     "packages": {
         "aura/router": {
             "install-path": "vendor/aura/router",
@@ -108,6 +111,10 @@
             "install-path": "vendor/puli/url-generator",
             "installer": "composer"
         },
+        "ramsey/uuid": {
+            "install-path": "vendor/ramsey/uuid",
+            "installer": "composer"
+        },
         "sebastian/comparator": {
             "install-path": "vendor/sebastian/comparator",
             "installer": "composer",
@@ -176,6 +183,10 @@
         },
         "webmozart/assert": {
             "install-path": "vendor/webmozart/assert",
+            "installer": "composer"
+        },
+        "webmozart/expression": {
+            "install-path": "vendor/webmozart/expression",
             "installer": "composer"
         },
         "webmozart/glob": {
