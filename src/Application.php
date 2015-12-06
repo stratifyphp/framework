@@ -4,6 +4,7 @@ namespace Stratify\Framework;
 
 use DI\ContainerBuilder;
 use Interop\Container\ContainerInterface;
+use Interop\Container\Definition\DefinitionProviderInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Puli\Repository\Api\ResourceRepository;
 use Puli\UrlGenerator\Api\UrlGenerator;
@@ -76,7 +77,7 @@ class Application
     /**
      * Override this method to configure the container builder.
      *
-     * @param array $modules Array of definition files/arrays
+     * @param array $modules Array of definition files/arrays or DefinitionProviderInterface instances
      */
     protected function createContainerBuilder(array $modules) : ContainerBuilder
     {
@@ -110,6 +111,8 @@ class Application
             // Module name
             $file = '/' . $module . '/config/config.php';
             $builder->addDefinitions($resources->get($file)->getFilesystemPath());
+        } elseif ($module instanceof DefinitionProviderInterface) {
+            $builder->addDefinitions($module);
         } else {
             // Definition array
             assert(is_array($module));

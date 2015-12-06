@@ -16,6 +16,10 @@
             "install-path": "vendor/container-interop/container-interop",
             "installer": "composer"
         },
+        "container-interop/definition-interop": {
+            "install-path": "vendor/container-interop/definition-interop",
+            "installer": "composer"
+        },
         "doctrine/instantiator": {
             "install-path": "vendor/doctrine/instantiator",
             "installer": "composer",
@@ -23,6 +27,10 @@
         },
         "filp/whoops": {
             "install-path": "vendor/filp/whoops",
+            "installer": "composer"
+        },
+        "mnapoli/assembly": {
+            "install-path": "vendor/mnapoli/assembly",
             "installer": "composer"
         },
         "myclabs/deep-copy": {
