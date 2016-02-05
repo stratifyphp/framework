@@ -82,7 +82,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $app = $this->runHttp($http, new ServerRequest([], [], '/', 'GET'));
         $this->assertEquals('Home', $this->responseEmitter->output);
 
-        $app->runHttp(new ServerRequest([], [], '/about', 'GET'));
+        $app->http()->run(new ServerRequest([], [], '/about', 'GET'));
         $this->assertEquals('About', $this->responseEmitter->output);
     }
 
@@ -108,10 +108,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $app = $this->runHttp($http, new ServerRequest([], [], '/admin/hello', 'GET'));
         $this->assertEquals('Admin', $this->responseEmitter->output);
 
-        $app->runHttp(new ServerRequest([], [], '/api/hello', 'GET'));
+        $app->http()->run(new ServerRequest([], [], '/api/hello', 'GET'));
         $this->assertEquals('Hello', $this->responseEmitter->output);
 
-        $app->runHttp(new ServerRequest([], [], '/api/world', 'GET'));
+        $app->http()->run(new ServerRequest([], [], '/api/world', 'GET'));
         $this->assertEquals('World', $this->responseEmitter->output);
     }
 
@@ -197,7 +197,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
             ResourceRepository::class => new FilesystemRepository(__DIR__),
         ];
         $app = new Application($http, [], $config);
-        $app->runHttp($request);
+        $app->http()->run($request);
         return $app;
     }
 }

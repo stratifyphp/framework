@@ -5,11 +5,12 @@ namespace Stratify\Framework;
 use DI\ContainerBuilder;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Definition\DefinitionProviderInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Puli\Repository\Api\ResourceRepository;
 use Puli\UrlGenerator\Api\UrlGenerator;
+use Silly\Application as CliApplication;
 use Stratify\Framework\Config\ConfigCompiler;
 use Stratify\Framework\Config\Node;
+use Stratify\Http\Application as HttpApplication;
 use Zend\Diactoros\Response\EmitterInterface;
 
 /**
@@ -28,9 +29,19 @@ class Application
     private $http;
 
     /**
+     * @var HttpApplication|null
+     */
+    private $httpApplication;
+
+    /**
+     * @var CliApplication|null
+     */
+    private $cliApplication;
+
+    /**
      * @param callable|Node $http
-     * @param array         $modules
-     * @param string|array  $config
+     * @param array $modules
+     * @param string|array $config
      */
     public function __construct($http, array $modules = [], $config = [])
     {
@@ -45,19 +56,30 @@ class Application
         $this->http = $configCompiler->compile($http);
     }
 
-    public function runHttp(ServerRequestInterface $request = null)
+    public function http() : HttpApplication
     {
-        $invoker = $this->container->get('invoker.middlewares');
-        $responseEmitter = $this->container->get(EmitterInterface::class);
+        if (!$this->httpApplication) {
+            $this->httpApplication = new HttpApplication(
+                $this->http,
+                $this->container->get('invoker.middlewares'),
+                $this->container->get(EmitterInterface::class)
+            );
+        }
 
-        $app = new \Stratify\Http\Application($this->http, $invoker, $responseEmitter);
-        $app->run($request);
+        return $this->httpApplication;
     }
 
-    /**
-     * @return ContainerInterface
-     */
-    public function getContainer()
+    public function cli() : CliApplication
+    {
+        if (!$this->cliApplication) {
+            $this->cliApplication = new CliApplication();
+            $this->cliApplication->useContainer($this->container, true, true);
+        }
+
+        return $this->cliApplication;
+    }
+
+    public function getContainer() : ContainerInterface
     {
         return $this->container;
     }

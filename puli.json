@@ -33,6 +33,10 @@
             "install-path": "vendor/mnapoli/assembly",
             "installer": "composer"
         },
+        "mnapoli/silly": {
+            "install-path": "vendor/mnapoli/silly",
+            "installer": "composer"
+        },
         "myclabs/deep-copy": {
             "install-path": "vendor/myclabs/deep-copy",
             "installer": "composer",
@@ -175,10 +179,18 @@
             "install-path": "vendor/stratify/router",
             "installer": "composer"
         },
+        "symfony/console": {
+            "install-path": "vendor/symfony/console",
+            "installer": "composer"
+        },
         "symfony/filesystem": {
             "install-path": "vendor/symfony/filesystem",
             "installer": "composer",
             "env": "dev"
+        },
+        "symfony/polyfill-mbstring": {
+            "install-path": "vendor/symfony/polyfill-mbstring",
+            "installer": "composer"
         },
         "symfony/process": {
             "install-path": "vendor/symfony/process",
