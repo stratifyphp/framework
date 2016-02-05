@@ -2,6 +2,7 @@
 
 namespace Stratify\Framework\Config;
 
+use Interop\Container\ContainerInterface;
 use Puli\Repository\Api\ResourceRepository;
 use Stratify\Http\Middleware\Invoker\MiddlewareInvoker;
 use Stratify\Http\Middleware\MiddlewarePipe;
@@ -14,14 +15,14 @@ use Stratify\Router\Router;
 class ConfigCompiler
 {
     /**
-     * @var MiddlewareInvoker
+     * @var ContainerInterface
      */
-    private $middlewareInvoker;
+    private $container;
 
     /**
      * @var MiddlewareInvoker
      */
-    private $controllerInvoker;
+    private $middlewareInvoker;
 
     /**
      * @var ResourceRepository
@@ -29,13 +30,13 @@ class ConfigCompiler
     private $resourceRepository;
 
     public function __construct(
+        ContainerInterface $container,
         MiddlewareInvoker $middlewareInvoker,
-        MiddlewareInvoker $controllerInvoker,
         ResourceRepository $resourceRepository
     ) {
         $this->middlewareInvoker = $middlewareInvoker;
-        $this->controllerInvoker = $controllerInvoker;
         $this->resourceRepository = $resourceRepository;
+        $this->container = $container;
     }
 
     /**
@@ -65,7 +66,7 @@ class ConfigCompiler
             case 'pipe':
                 return new MiddlewarePipe($subNodes, $this->middlewareInvoker);
             case 'router':
-                return new Router($subNodes, $this->controllerInvoker);
+                return new Router($subNodes, $this->container);
             case 'prefix':
                 return new PrefixRouter($subNodes, $this->middlewareInvoker);
             default:

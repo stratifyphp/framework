@@ -19,7 +19,7 @@
     "require": {
         "php": ">=7.0",
         "stratify/http": "~0.1.0",
-        "stratify/router": "~0.1.0",
+        "stratify/router": "~0.2.0",
         "stratify/error-handler-module": "~0.1.1",
         "php-di/php-di": "^5.2",
         "puli/composer-plugin": "1.0.0-beta8",

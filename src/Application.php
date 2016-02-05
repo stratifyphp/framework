@@ -60,7 +60,7 @@ class Application
         if (!$this->httpApplication) {
             $this->httpApplication = new HttpApplication(
                 $this->http,
-                $this->container->get('invoker.middlewares'),
+                $this->container->get('middleware_invoker'),
                 $this->container->get(EmitterInterface::class)
             );
         }
