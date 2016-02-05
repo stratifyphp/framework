@@ -5,7 +5,6 @@ namespace Stratify\Framework;
 use DI\ContainerBuilder;
 use Interop\Container\ContainerInterface;
 use Puli\Repository\Api\ResourceRepository;
-use Puli\UrlGenerator\Api\UrlGenerator;
 use Silly\Application as CliApplication;
 use Stratify\Framework\Config\ConfigCompiler;
 use Stratify\Framework\Config\Node;
@@ -106,17 +105,12 @@ class Application
 
         $factoryClass = PULI_FACTORY_CLASS;
         $puli = new $factoryClass();
-
-        /** @var ResourceRepository $resourceRepository */
         $resourceRepository = $puli->createRepository();
-        $resourceDiscovery = $puli->createDiscovery($resourceRepository);
 
         $builder->addDefinitions([
             'puli.factory' => $puli,
             ResourceRepository::class => $resourceRepository,
-            UrlGenerator::class => $puli->createUrlGenerator($resourceDiscovery),
         ]);
-
         $this->addModule($builder, $resourceRepository, 'stratify');
 
         foreach ($modules as $module) {

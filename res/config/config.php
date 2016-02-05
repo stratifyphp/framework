@@ -2,6 +2,9 @@
 
 use DI\Container;
 use Interop\Container\ContainerInterface;
+use Puli\Discovery\Api\Discovery;
+use Puli\Repository\Api\ResourceRepository;
+use Puli\UrlGenerator\Api\UrlGenerator;
 use Stratify\Framework\Config\ConfigCompiler;
 use Stratify\Framework\Middleware\ContainerBasedInvoker;
 use Zend\Diactoros\Response\EmitterInterface;
@@ -19,5 +22,15 @@ return [
         ->constructorParameter('middlewareInvoker', get('middleware_invoker')),
 
     'middleware_invoker' => get(ContainerBasedInvoker::class),
+
+    // Puli
+    Discovery::class => function (ContainerInterface $c) {
+        $puli = $c->get('puli.factory');
+        return $puli->createDiscovery($c->get(ResourceRepository::class));
+    },
+    UrlGenerator::class => function (ContainerInterface $c) {
+        $puli = $c->get('puli.factory');
+        return $puli->createUrlGenerator($c->get(Discovery::class));
+    },
 
 ];
