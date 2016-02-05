@@ -4,7 +4,6 @@ namespace Stratify\Framework;
 
 use DI\ContainerBuilder;
 use Interop\Container\ContainerInterface;
-use Interop\Container\Definition\DefinitionProviderInterface;
 use Puli\Repository\Api\ResourceRepository;
 use Puli\UrlGenerator\Api\UrlGenerator;
 use Silly\Application as CliApplication;
@@ -133,8 +132,6 @@ class Application
             // Module name
             $file = '/' . $module . '/config/config.php';
             $builder->addDefinitions($resources->get($file)->getFilesystemPath());
-        } elseif ($module instanceof DefinitionProviderInterface) {
-            $builder->addDefinitions($module);
         } else {
             // Definition array
             assert(is_array($module));
