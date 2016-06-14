@@ -25,6 +25,10 @@
             "install-path": "vendor/filp/whoops",
             "installer": "composer"
         },
+        "justinrainbow/json-schema": {
+            "install-path": "vendor/justinrainbow/json-schema",
+            "installer": "composer"
+        },
         "mnapoli/silly": {
             "install-path": "vendor/mnapoli/silly",
             "installer": "composer"
@@ -33,6 +37,10 @@
             "install-path": "vendor/myclabs/deep-copy",
             "installer": "composer",
             "env": "dev"
+        },
+        "paragonie/random_compat": {
+            "install-path": "vendor/paragonie/random_compat",
+            "installer": "composer"
         },
         "php-di/invoker": {
             "install-path": "vendor/php-di/invoker",
@@ -46,8 +54,18 @@
             "install-path": "vendor/php-di/phpdoc-reader",
             "installer": "composer"
         },
+        "phpdocumentor/reflection-common": {
+            "install-path": "vendor/phpdocumentor/reflection-common",
+            "installer": "composer",
+            "env": "dev"
+        },
         "phpdocumentor/reflection-docblock": {
             "install-path": "vendor/phpdocumentor/reflection-docblock",
+            "installer": "composer",
+            "env": "dev"
+        },
+        "phpdocumentor/type-resolver": {
+            "install-path": "vendor/phpdocumentor/type-resolver",
             "installer": "composer",
             "env": "dev"
         },
@@ -119,6 +137,11 @@
             "install-path": "vendor/ramsey/uuid",
             "installer": "composer"
         },
+        "sebastian/code-unit-reverse-lookup": {
+            "install-path": "vendor/sebastian/code-unit-reverse-lookup",
+            "installer": "composer",
+            "env": "dev"
+        },
         "sebastian/comparator": {
             "install-path": "vendor/sebastian/comparator",
             "installer": "composer",
@@ -144,6 +167,11 @@
             "installer": "composer",
             "env": "dev"
         },
+        "sebastian/object-enumerator": {
+            "install-path": "vendor/sebastian/object-enumerator",
+            "installer": "composer",
+            "env": "dev"
+        },
         "sebastian/recursion-context": {
             "install-path": "vendor/sebastian/recursion-context",
             "installer": "composer",
@@ -158,6 +186,10 @@
             "install-path": "vendor/sebastian/version",
             "installer": "composer",
             "env": "dev"
+        },
+        "seld/jsonlint": {
+            "install-path": "vendor/seld/jsonlint",
+            "installer": "composer"
         },
         "stratify/error-handler-module": {
             "install-path": "vendor/stratify/error-handler-module",
@@ -177,8 +209,7 @@
         },
         "symfony/filesystem": {
             "install-path": "vendor/symfony/filesystem",
-            "installer": "composer",
-            "env": "dev"
+            "installer": "composer"
         },
         "symfony/polyfill-mbstring": {
             "install-path": "vendor/symfony/polyfill-mbstring",
@@ -205,8 +236,8 @@
             "install-path": "vendor/webmozart/glob",
             "installer": "composer"
         },
-        "webmozart/key-value-store": {
-            "install-path": "vendor/webmozart/key-value-store",
+        "webmozart/json": {
+            "install-path": "vendor/webmozart/json",
             "installer": "composer"
         },
         "webmozart/path-util": {

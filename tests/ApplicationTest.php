@@ -2,6 +2,8 @@
 
 namespace Stratify\Framework\Test;
 
+require_once __DIR__ . '/../.puli/GeneratedPuliFactory.php';
+
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
