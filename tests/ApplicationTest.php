@@ -84,7 +84,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $app = $this->runHttp($http, new ServerRequest([], [], '/', 'GET'));
         $this->assertEquals('Home', $this->responseEmitter->output);
 
-        $app->http()->run(new ServerRequest([], [], '/about', 'GET'));
+        $app->http($http)->run(new ServerRequest([], [], '/about', 'GET'));
         $this->assertEquals('About', $this->responseEmitter->output);
     }
 
@@ -110,10 +110,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $app = $this->runHttp($http, new ServerRequest([], [], '/admin/hello', 'GET'));
         $this->assertEquals('Admin', $this->responseEmitter->output);
 
-        $app->http()->run(new ServerRequest([], [], '/api/hello', 'GET'));
+        $app->http($http)->run(new ServerRequest([], [], '/api/hello', 'GET'));
         $this->assertEquals('Hello', $this->responseEmitter->output);
 
-        $app->http()->run(new ServerRequest([], [], '/api/world', 'GET'));
+        $app->http($http)->run(new ServerRequest([], [], '/api/world', 'GET'));
         $this->assertEquals('World', $this->responseEmitter->output);
     }
 
@@ -193,13 +193,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     private function runHttp($http, ServerRequestInterface $request = null)
     {
-        $config = [
+        $app = new Application;
+        $app->addConfig([
             EmitterInterface::class => $this->responseEmitter,
             // Override the ResourceRepository
             ResourceRepository::class => new FilesystemRepository(__DIR__),
-        ];
-        $app = new Application($http, [], $config);
-        $app->http()->run($request);
+        ]);
+        $app->http($http)->run($request);
         return $app;
     }
 }

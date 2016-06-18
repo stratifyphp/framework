@@ -2,9 +2,8 @@
 
 namespace Stratify\Framework;
 
-use DI\ContainerBuilder;
+use DI\Kernel\Kernel;
 use Interop\Container\ContainerInterface;
-use Puli\Repository\Api\ResourceRepository;
 use Silly\Application as CliApplication;
 use Stratify\Framework\Config\ConfigCompiler;
 use Stratify\Framework\Config\Node;
@@ -14,7 +13,7 @@ use Zend\Diactoros\Response\EmitterInterface;
 /**
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
  */
-class Application
+class Application extends Kernel
 {
     /**
      * @var ContainerInterface
@@ -22,114 +21,60 @@ class Application
     private $container;
 
     /**
-     * @var callable
+     * @var HttpApplication|null
      */
     private $http;
 
     /**
-     * @var HttpApplication|null
-     */
-    private $httpApplication;
-
-    /**
      * @var CliApplication|null
      */
-    private $cliApplication;
+    private $cli;
 
     /**
-     * @param callable|Node $http
-     * @param array $modules
-     * @param string|array $config
+     * {@inheritdoc}
      */
-    public function __construct($http, array $modules = [], $config = [])
+    public function __construct(array $modules = [], $environment = 'prod')
     {
-        if (!empty($config)) {
-            $modules[] = $config;
-        }
+        array_unshift($modules, 'stratify');
 
-        $this->container = $this->createContainer($modules);
-
-        /** @var ConfigCompiler $configCompiler */
-        $configCompiler = $this->container->get(ConfigCompiler::class);
-        $this->http = $configCompiler->compile($http);
+        parent::__construct($modules, $environment);
     }
 
-    public function http() : HttpApplication
+    /**
+     * @param callable|Node $stack
+     */
+    public function http($stack) : HttpApplication
     {
-        if (!$this->httpApplication) {
-            $this->httpApplication = new HttpApplication(
-                $this->http,
-                $this->container->get('middleware_invoker'),
-                $this->container->get(EmitterInterface::class)
+        if (!$this->http) {
+            $container = $this->getContainer();
+            /** @var ConfigCompiler $configCompiler */
+            $configCompiler = $container->get(ConfigCompiler::class);
+
+            $this->http = new HttpApplication(
+                $configCompiler->compile($stack),
+                $container->get('middleware_invoker'),
+                $container->get(EmitterInterface::class)
             );
         }
 
-        return $this->httpApplication;
+        return $this->http;
     }
 
     public function cli() : CliApplication
     {
-        if (!$this->cliApplication) {
-            $this->cliApplication = new CliApplication();
-            $this->cliApplication->useContainer($this->container, true, true);
+        if (!$this->cli) {
+            $this->cli = new CliApplication();
+            $this->cli->useContainer($this->getContainer(), true, true);
         }
 
-        return $this->cliApplication;
+        return $this->cli;
     }
 
     public function getContainer() : ContainerInterface
     {
+        if (!$this->container) {
+            $this->container = $this->createContainer();
+        }
         return $this->container;
-    }
-
-    /**
-     * Override this method to customize how the container is created.
-     *
-     * @param array $modules Array of definition files/arrays
-     */
-    protected function createContainer(array $modules) : ContainerInterface
-    {
-        $containerBuilder = $this->createContainerBuilder($modules);
-
-        return $containerBuilder->build();
-    }
-
-    /**
-     * Override this method to configure the container builder.
-     *
-     * @param array $modules Array of definition files/arrays or DefinitionProviderInterface instances
-     */
-    protected function createContainerBuilder(array $modules) : ContainerBuilder
-    {
-        $builder = new ContainerBuilder;
-
-        $factoryClass = PULI_FACTORY_CLASS;
-        $puli = new $factoryClass();
-        $resourceRepository = $puli->createRepository();
-
-        $builder->addDefinitions([
-            'puli.factory' => $puli,
-            ResourceRepository::class => $resourceRepository,
-        ]);
-        $this->addModule($builder, $resourceRepository, 'stratify');
-
-        foreach ($modules as $module) {
-            $this->addModule($builder, $resourceRepository, $module);
-        }
-
-        return $builder;
-    }
-
-    private function addModule(ContainerBuilder $builder, ResourceRepository $resources, $module)
-    {
-        if (is_string($module)) {
-            // Module name
-            $file = '/' . $module . '/config/config.php';
-            $builder->addDefinitions($resources->get($file)->getFilesystemPath());
-        } else {
-            // Definition array
-            assert(is_array($module));
-            $builder->addDefinitions($module);
-        }
     }
 }
