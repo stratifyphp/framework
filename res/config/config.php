@@ -3,7 +3,6 @@
 use DI\Container;
 use Interop\Container\ContainerInterface;
 use Puli\Discovery\Api\Discovery;
-use Puli\Repository\Api\ResourceRepository;
 use Puli\UrlGenerator\Api\UrlGenerator;
 use Stratify\Framework\Config\ConfigCompiler;
 use Stratify\Framework\Middleware\ContainerBasedInvoker;
