@@ -2,7 +2,12 @@
 
 namespace Stratify\Framework;
 
-use Stratify\Framework\Config\Node;
+use Interop\Container\ContainerInterface;
+use Stratify\Framework\Middleware\MiddlewareFactory;
+use Stratify\Http\Middleware\Middleware;
+use Stratify\Http\Middleware\Pipe;
+use Stratify\Router\PrefixRouter;
+use Stratify\Router\Router;
 
 if (! function_exists('Stratify\Framework\pipe')) {
 
@@ -11,9 +16,23 @@ if (! function_exists('Stratify\Framework\pipe')) {
      *
      * @param array $middlewares Middlewares to execute in order.
      */
-    function pipe(array $middlewares) : Node
+    function pipe(array $middlewares) : MiddlewareFactory
     {
-        return new Node('pipe', $middlewares);
+        return new class($middlewares) implements MiddlewareFactory {
+            private $middlewares;
+            public function __construct(array $middlewares)
+            {
+                $this->middlewares = $middlewares;
+            }
+            public function create(ContainerInterface $container, array $newSubMiddlewares) : Middleware
+            {
+                return new Pipe($newSubMiddlewares, $container->get('middleware_invoker'));
+            }
+            public function getSubMiddlewares() : array
+            {
+                return $this->middlewares;
+            }
+        };
     }
 
     /**
@@ -21,9 +40,23 @@ if (! function_exists('Stratify\Framework\pipe')) {
      *
      * @param array|string $routes Array of routes or Puli path to a file returning the route array.
      */
-    function router($routes) : Node
+    function router($routes) : MiddlewareFactory
     {
-        return new Node('router', $routes);
+        return new class($routes) implements MiddlewareFactory {
+            private $routes;
+            public function __construct($routes)
+            {
+                $this->routes = $routes;
+            }
+            public function create(ContainerInterface $container, array $newSubMiddlewares) : Middleware
+            {
+                return new Router($newSubMiddlewares, $container);
+            }
+            public function getSubMiddlewares()
+            {
+                return $this->routes;
+            }
+        };
     }
 
     /**
@@ -33,9 +66,23 @@ if (! function_exists('Stratify\Framework\pipe')) {
      *
      * @param array $routes Mapping of URL prefixes to the middleware to execute.
      */
-    function prefix(array $routes) : Node
+    function prefix(array $routes) : MiddlewareFactory
     {
-        return new Node('prefix', $routes);
+        return new class($routes) implements MiddlewareFactory {
+            private $routes;
+            public function __construct(array $routes)
+            {
+                $this->routes = $routes;
+            }
+            public function create(ContainerInterface $container, array $newSubMiddlewares) : Middleware
+            {
+                return new PrefixRouter($newSubMiddlewares, $container->get('middleware_invoker'));
+            }
+            public function getSubMiddlewares() : array
+            {
+                return $this->routes;
+            }
+        };
     }
 
 }

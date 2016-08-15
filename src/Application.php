@@ -5,9 +5,10 @@ namespace Stratify\Framework;
 use DI\Kernel\Kernel;
 use Interop\Container\ContainerInterface;
 use Silly\Application as CliApplication;
-use Stratify\Framework\Config\ConfigCompiler;
-use Stratify\Framework\Config\Node;
+use Stratify\Framework\Middleware\MiddlewareFactory;
+use Stratify\Framework\Middleware\TreeCompiler;
 use Stratify\Http\Application as HttpApplication;
+use Stratify\Http\Middleware\Middleware;
 use Zend\Diactoros\Response\EmitterInterface;
 
 /**
@@ -41,17 +42,16 @@ class Application extends Kernel
     }
 
     /**
-     * @param callable|Node $stack
+     * @param callable|Middleware|MiddlewareFactory $stack
      */
     public function http($stack) : HttpApplication
     {
         if (!$this->http) {
             $container = $this->getContainer();
-            /** @var ConfigCompiler $configCompiler */
-            $configCompiler = $container->get(ConfigCompiler::class);
+            $treeCompiler = $container->get(TreeCompiler::class);
 
             $this->http = new HttpApplication(
-                $configCompiler->compile($stack),
+                $treeCompiler->compile($stack),
                 $container->get('middleware_invoker'),
                 $container->get(EmitterInterface::class)
             );
