@@ -18,8 +18,8 @@
     },
     "require": {
         "php": ">=7.0",
-        "stratify/http": "~0.2.0",
-        "stratify/router": "~0.2.2",
+        "stratify/http": "~0.3.0",
+        "stratify/router": "~0.3.0",
         "stratify/error-handler-module": "~0.2.0",
         "php-di/php-di": "^5.2",
         "php-di/kernel": "~0.2.2",
