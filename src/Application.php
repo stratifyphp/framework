@@ -9,7 +9,6 @@ use Stratify\Framework\Middleware\MiddlewareFactory;
 use Stratify\Framework\Middleware\TreeCompiler;
 use Stratify\Http\Application as HttpApplication;
 use Stratify\Http\Middleware\Middleware;
-use Zend\Diactoros\Response\EmitterInterface;
 
 /**
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
@@ -22,52 +21,33 @@ class Application extends Kernel
     private $container;
 
     /**
-     * @var HttpApplication|null
-     */
-    private $http;
-
-    /**
-     * @var CliApplication|null
-     */
-    private $cli;
-
-    /**
      * {@inheritdoc}
+     * @param callable|Middleware|MiddlewareFactory $httpStack
      */
-    public function __construct(array $modules = [], $environment = 'prod')
+    public function __construct(array $modules = [], $environment = 'prod', $httpStack = null)
     {
         array_unshift($modules, 'stratify');
+
+        if ($httpStack) {
+            $this->addConfig([
+                'http' => function (ContainerInterface $container) use ($httpStack) {
+                    $treeCompiler = $container->get(TreeCompiler::class);
+                    return $treeCompiler->compile($httpStack);
+                },
+            ]);
+        }
 
         parent::__construct($modules, $environment);
     }
 
-    /**
-     * @param callable|Middleware|MiddlewareFactory $stack
-     */
-    public function http($stack) : HttpApplication
+    public function http() : HttpApplication
     {
-        if (!$this->http) {
-            $container = $this->getContainer();
-            $treeCompiler = $container->get(TreeCompiler::class);
-
-            $this->http = new HttpApplication(
-                $treeCompiler->compile($stack),
-                $container->get('middleware_invoker'),
-                $container->get(EmitterInterface::class)
-            );
-        }
-
-        return $this->http;
+        return $this->getContainer()->get(HttpApplication::class);
     }
 
     public function cli() : CliApplication
     {
-        if (!$this->cli) {
-            $this->cli = new CliApplication();
-            $this->cli->useContainer($this->getContainer(), true, true);
-        }
-
-        return $this->cli;
+        return $this->getContainer()->get(CliApplication::class);
     }
 
     public function getContainer() : ContainerInterface

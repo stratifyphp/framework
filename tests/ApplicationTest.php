@@ -11,7 +11,6 @@ use Puli\Repository\Api\ResourceRepository;
 use Puli\Repository\FilesystemRepository;
 use Stratify\Framework\Application;
 use Stratify\Framework\Test\Mock\FakeResponseEmitter;
-use Zend\Diactoros\Request;
 use Zend\Diactoros\Response\EmitterInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\ServerRequest;
@@ -84,7 +83,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $app = $this->runHttp($http, new ServerRequest([], [], '/', 'GET'));
         $this->assertEquals('Home', $this->responseEmitter->output);
 
-        $app->http($http)->run(new ServerRequest([], [], '/about', 'GET'));
+        $app->http()->run(new ServerRequest([], [], '/about', 'GET'));
         $this->assertEquals('About', $this->responseEmitter->output);
     }
 
@@ -110,10 +109,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $app = $this->runHttp($http, new ServerRequest([], [], '/admin/hello', 'GET'));
         $this->assertEquals('Admin', $this->responseEmitter->output);
 
-        $app->http($http)->run(new ServerRequest([], [], '/api/hello', 'GET'));
+        $app->http()->run(new ServerRequest([], [], '/api/hello', 'GET'));
         $this->assertEquals('Hello', $this->responseEmitter->output);
 
-        $app->http($http)->run(new ServerRequest([], [], '/api/world', 'GET'));
+        $app->http()->run(new ServerRequest([], [], '/api/world', 'GET'));
         $this->assertEquals('World', $this->responseEmitter->output);
     }
 
@@ -191,15 +190,25 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Hello world!', $this->responseEmitter->output);
     }
 
-    private function runHttp($http, ServerRequestInterface $request = null)
+    /**
+     * @test
+     * @expectedException \Exception
+     * @expectedExceptionMessage No HTTP stack was defined
+     */
+    public function http_app_fails_if_no_stack_defined()
     {
-        $app = new Application;
+        (new Application)->http()->run();
+    }
+
+    private function runHttp($http, ServerRequestInterface $request = null) : Application
+    {
+        $app = new Application([], 'prod', $http);
         $app->addConfig([
             EmitterInterface::class => $this->responseEmitter,
             // Override the ResourceRepository
             ResourceRepository::class => new FilesystemRepository(__DIR__),
         ]);
-        $app->http($http)->run($request);
+        $app->http()->run($request);
         return $app;
     }
 }
