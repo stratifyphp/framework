@@ -7,11 +7,6 @@ use Puli\Discovery\Api\Discovery;
 use Puli\Repository\Api\ResourceRepository;
 use Puli\UrlGenerator\Api\UrlGenerator;
 use Stratify\Framework\Application;
-use Zend\Diactoros\Request;
-use function Stratify\Router\route;
-use function Stratify\Framework\pipe;
-use function Stratify\Framework\prefix;
-use function Stratify\Framework\router;
 use Zend\Diactoros\Response\EmitterInterface;
 use Zend\Diactoros\Response\SapiEmitter;
 

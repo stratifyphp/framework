@@ -5,14 +5,13 @@ namespace Stratify\Framework\Test;
 require_once __DIR__ . '/../.puli/GeneratedPuliFactory.php';
 
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Puli\Repository\Api\ResourceRepository;
 use Puli\Repository\FilesystemRepository;
 use Stratify\Framework\Application;
 use Stratify\Framework\Test\Mock\FakeResponseEmitter;
+use Stratify\Http\Response\SimpleResponse;
 use Zend\Diactoros\Response\EmitterInterface;
-use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\ServerRequest;
 use function Stratify\Router\route;
 use function Stratify\Framework\pipe;
@@ -36,9 +35,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
      */
     public function calls_middleware()
     {
-        $http = function (RequestInterface $request, ResponseInterface $response, callable $next) {
-            $response->getBody()->write('Hello world!');
-            return $response;
+        $http = function (RequestInterface $request, callable $next) {
+            return new SimpleResponse('Hello world!');
         };
         $this->runHttp($http);
         $this->assertEquals('Hello world!', $this->responseEmitter->output);
@@ -50,13 +48,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function calls_middleware_pipe()
     {
         $http = pipe([
-            function (RequestInterface $request, ResponseInterface $response, callable $next) {
-                $response->getBody()->write('Hello');
-                return $next($request, $response);
-            },
-            function (RequestInterface $request, ResponseInterface $response) {
+            function (RequestInterface $request, callable $next) {
+                $response = $next($request);
                 $response->getBody()->write(' world!');
                 return $response;
+            },
+            function () {
+                return new SimpleResponse('Hello');
             },
             function () {
                 throw new \Exception;
@@ -73,10 +71,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $http = router([
             '/' => function () {
-                return new HtmlResponse('Home');
+                return new SimpleResponse('Home');
             },
             '/about' => route(function () {
-                return new HtmlResponse('About');
+                return new SimpleResponse('About');
             }),
         ]);
 
@@ -94,14 +92,14 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $http = prefix([
             '/admin' => function () {
-                return new HtmlResponse('Admin');
+                return new SimpleResponse('Admin');
             },
             '/api' => router([
                 '/api/hello' => function () {
-                    return new HtmlResponse('Hello');
+                    return new SimpleResponse('Hello');
                 },
                 '/api/world' => function () {
-                    return new HtmlResponse('World');
+                    return new SimpleResponse('World');
                 },
             ]),
         ]);
@@ -123,19 +121,18 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $http = pipe([
             router([
-                '/' => function (RequestInterface $request, ResponseInterface $response) {
-                    $response->getBody()->write('Home');
-                    return $response;
+                '/' => function () {
+                    return new SimpleResponse('Home');
                 },
                 '/api/{resource}' => pipe([
-                    function (RequestInterface $request, ResponseInterface $response, callable $next) {
-                        $response->getBody()->write("Auth check\n");
-                        return $next($request, $response);
+                    function (RequestInterface $request, callable $next) {
+                        $response = $next($request);
+                        $response->getBody()->write("\nAuth check");
+                        return $response;
                     },
                     router([
-                        '/api/hello' => function (RequestInterface $request, ResponseInterface $response) {
-                            $response->getBody()->write('Hello');
-                            return $response;
+                        '/api/hello' => function () {
+                            return new SimpleResponse('Hello');
                         },
                     ])
                 ]),
@@ -146,7 +143,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Home', $this->responseEmitter->output);
 
         $this->runHttp($http, new ServerRequest([], [], '/api/hello', 'GET'));
-        $this->assertEquals("Auth check\nHello", $this->responseEmitter->output);
+        $this->assertEquals("Hello\nAuth check", $this->responseEmitter->output);
     }
 
     /**
@@ -155,8 +152,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function injects_route_parameters_in_controllers()
     {
         $http = router([
-            '/{name}' => function ($name, ResponseInterface $response) {
-                return new HtmlResponse('Hello ' . $name);
+            '/{name}' => function ($name) {
+                return new SimpleResponse('Hello ' . $name);
             },
         ]);
 

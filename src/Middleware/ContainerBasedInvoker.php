@@ -31,17 +31,12 @@ class ContainerBasedInvoker implements MiddlewareInvoker
         $this->container = $container;
     }
 
-    public function invoke(
-        $middleware,
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $next
-    ) : ResponseInterface
+    public function invoke($middleware, ServerRequestInterface $request, callable $next) : ResponseInterface
     {
         if (! $this->invoker) {
             $this->invoker = new Invoker(new NumericArrayResolver, $this->container);
         }
 
-        return $this->invoker->call($middleware, [$request, $response, $next]);
+        return $this->invoker->call($middleware, [$request, $next]);
     }
 }
