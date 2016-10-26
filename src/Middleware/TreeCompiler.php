@@ -2,9 +2,10 @@
 
 namespace Stratify\Framework\Middleware;
 
-use Interop\Container\ContainerInterface;
+use DI\Container;
 use Puli\Repository\Api\ResourceRepository;
 use Stratify\Http\Middleware\Middleware;
+use Stratify\Router\UrlGenerator;
 
 /**
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
@@ -12,11 +13,11 @@ use Stratify\Http\Middleware\Middleware;
 class TreeCompiler
 {
     /**
-     * @var ContainerInterface
+     * @var Container
      */
     private $container;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(Container $container)
     {
         $this->container = $container;
     }
@@ -28,6 +29,7 @@ class TreeCompiler
      */
     public function compile($middleware)
     {
+        // Compile lazy middlewares
         if ($middleware instanceof MiddlewareFactory) {
             $subMiddlewares = $middleware->getSubMiddlewares();
 
@@ -39,6 +41,11 @@ class TreeCompiler
             $subMiddlewares = array_map([$this, 'compile'], $subMiddlewares);
 
             $middleware = $middleware->create($this->container, $subMiddlewares);
+        }
+
+        // Register URL generators in the container
+        if ($middleware instanceof UrlGenerator) {
+
         }
 
         return $middleware;
