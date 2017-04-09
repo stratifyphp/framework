@@ -3,9 +3,6 @@
 namespace Stratify\Framework\Test;
 
 use Interop\Container\ContainerInterface;
-use Puli\Discovery\Api\Discovery;
-use Puli\Repository\Api\ResourceRepository;
-use Puli\UrlGenerator\Api\UrlGenerator;
 use Stratify\Framework\Application;
 use Zend\Diactoros\Response\EmitterInterface;
 use Zend\Diactoros\Response\SapiEmitter;
@@ -28,41 +25,5 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     {
         $container = (new Application)->getContainer();
         $this->assertInstanceOf(SapiEmitter::class, $container->get(EmitterInterface::class));
-    }
-
-    /**
-     * @test
-     */
-    public function registers_puli_factory()
-    {
-        $container = (new Application)->getContainer();
-        $this->assertTrue($container->has('puli.factory'));
-    }
-
-    /**
-     * @test
-     */
-    public function registers_puli_repository()
-    {
-        $container = (new Application)->getContainer();
-        $this->assertInstanceOf(ResourceRepository::class, $container->get(ResourceRepository::class));
-    }
-
-    /**
-     * @test
-     */
-    public function registers_puli_discovery()
-    {
-        $container = (new Application)->getContainer();
-        $this->assertInstanceOf(Discovery::class, $container->get(Discovery::class));
-    }
-
-    /**
-     * @test
-     */
-    public function registers_puli_url_generator()
-    {
-        $container = (new Application)->getContainer();
-        $this->assertInstanceOf(UrlGenerator::class, $container->get(UrlGenerator::class));
     }
 }

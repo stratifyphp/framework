@@ -24,9 +24,9 @@ class Application extends Kernel
      * {@inheritdoc}
      * @param callable|Middleware|MiddlewareFactory $httpStack
      */
-    public function __construct(array $modules = [], $environment = 'prod', $httpStack = null)
+    public function __construct(array $modules = [], string $environment = 'prod', $httpStack = null)
     {
-        array_unshift($modules, 'stratify');
+        array_unshift($modules, 'stratify/framework');
 
         if ($httpStack) {
             $this->addConfig([

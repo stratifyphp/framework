@@ -6,8 +6,6 @@ require_once __DIR__ . '/../.puli/GeneratedPuliFactory.php';
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Puli\Repository\Api\ResourceRepository;
-use Puli\Repository\FilesystemRepository;
 use Stratify\Framework\Application;
 use Stratify\Framework\Test\Mock\FakeResponseEmitter;
 use Stratify\Http\Response\SimpleResponse;
@@ -178,17 +176,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     */
-    public function routes_can_be_defined_in_external_file_using_puli_path()
-    {
-        $http = router('/Fixture/routes.php');
-
-        $this->runHttp($http, new ServerRequest([], [], '/', 'GET'));
-        $this->assertEquals('Hello world!', $this->responseEmitter->output);
-    }
-
-    /**
-     * @test
      * @expectedException \Exception
      * @expectedExceptionMessage No HTTP stack was defined
      */
@@ -202,8 +189,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $app = new Application([], 'prod', $http);
         $app->addConfig([
             EmitterInterface::class => $this->responseEmitter,
-            // Override the ResourceRepository
-            ResourceRepository::class => new FilesystemRepository(__DIR__),
         ]);
         $app->http()->run($request);
         return $app;
