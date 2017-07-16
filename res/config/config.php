@@ -1,7 +1,9 @@
 <?php
 
 use DI\Container;
+use function DI\factory;
 use Stratify\Framework\Middleware\ContainerBasedInvoker;
+use Stratify\Framework\Middleware\TreeCompiler;
 use Zend\Diactoros\Response\EmitterInterface;
 use Zend\Diactoros\Response\SapiEmitter;
 use function DI\get;
@@ -14,7 +16,9 @@ return [
     \Silly\Application::class => create()
         ->method('useContainer', get(Container::class), true, true),
 
-    'http' => function () {
+    'http' => factory([TreeCompiler::class, 'compile'])
+        ->parameter('middleware', get('http.raw_stack')),
+    'http.raw_stack' => function () {
         throw new Exception('No HTTP stack was defined');
     },
 

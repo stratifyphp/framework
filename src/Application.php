@@ -3,10 +3,10 @@
 namespace Stratify\Framework;
 
 use DI\Kernel\Kernel;
+use function DI\value;
 use Psr\Container\ContainerInterface;
 use Silly\Application as CliApplication;
 use Stratify\Framework\Middleware\MiddlewareFactory;
-use Stratify\Framework\Middleware\TreeCompiler;
 use Stratify\Http\Application as HttpApplication;
 use Stratify\Http\Middleware\Middleware;
 
@@ -30,10 +30,7 @@ class Application extends Kernel
 
         if ($httpStack) {
             $this->addConfig([
-                'http' => function (ContainerInterface $container) use ($httpStack) {
-                    $treeCompiler = $container->get(TreeCompiler::class);
-                    return $treeCompiler->compile($httpStack);
-                },
+                'http.raw_stack' => value($httpStack),
             ]);
         }
 
