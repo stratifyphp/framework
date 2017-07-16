@@ -2,7 +2,7 @@
 
 namespace Stratify\Framework;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Stratify\Framework\Middleware\MiddlewareFactory;
 use Stratify\Http\Middleware\Middleware;
 use Stratify\Http\Middleware\Pipe;
@@ -38,7 +38,7 @@ if (! function_exists('Stratify\Framework\pipe')) {
     /**
      * Create a router middleware.
      *
-     * @param array|string $routes Array of routes or Puli path to a file returning the route array.
+     * @param array|string $routes Array of routes or path to a file returning the route array.
      */
     function router($routes) : MiddlewareFactory
     {

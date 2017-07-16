@@ -3,7 +3,7 @@
 namespace Stratify\Framework;
 
 use DI\Kernel\Kernel;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Silly\Application as CliApplication;
 use Stratify\Framework\Middleware\MiddlewareFactory;
 use Stratify\Framework\Middleware\TreeCompiler;

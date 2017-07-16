@@ -2,10 +2,13 @@
 
 namespace Stratify\Framework\Test;
 
-class FunctionsTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class FunctionsTest extends TestCase
 {
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function does_not_error_if_required_twice()
     {

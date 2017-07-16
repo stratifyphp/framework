@@ -2,8 +2,7 @@
 
 namespace Stratify\Framework\Test;
 
-require_once __DIR__ . '/../.puli/GeneratedPuliFactory.php';
-
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Stratify\Framework\Application;
@@ -16,7 +15,7 @@ use function Stratify\Framework\pipe;
 use function Stratify\Framework\prefix;
 use function Stratify\Framework\router;
 
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class ApplicationTest extends TestCase
 {
     /**
      * @var FakeResponseEmitter

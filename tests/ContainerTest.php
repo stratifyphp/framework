@@ -2,12 +2,13 @@
 
 namespace Stratify\Framework\Test;
 
-use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Stratify\Framework\Application;
 use Zend\Diactoros\Response\EmitterInterface;
 use Zend\Diactoros\Response\SapiEmitter;
 
-class ContainerTest extends \PHPUnit_Framework_TestCase
+class ContainerTest extends TestCase
 {
     /**
      * @test

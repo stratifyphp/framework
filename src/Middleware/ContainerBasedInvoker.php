@@ -2,9 +2,9 @@
 
 namespace Stratify\Framework\Middleware;
 
-use Interop\Container\ContainerInterface;
 use Invoker\Invoker;
 use Invoker\ParameterResolver\NumericArrayResolver;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Stratify\Http\Middleware\Invoker\MiddlewareInvoker;

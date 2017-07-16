@@ -2,7 +2,7 @@
 
 namespace Stratify\Framework\Middleware;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Stratify\Http\Middleware\Middleware;
 
 /**
