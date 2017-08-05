@@ -2,6 +2,7 @@
 
 namespace Stratify\Framework\Middleware;
 
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Container\ContainerInterface;
 use Stratify\Http\Middleware\Middleware;
 
@@ -23,7 +24,9 @@ class TreeCompiler
     /**
      * Compile a middleware tree.
      *
-     * @param Middleware|callable|MiddlewareFactory $middleware Middleware tree/node.
+     * @param MiddlewareInterface|callable|MiddlewareFactory $middleware Middleware tree/node.
+     *
+     * @return MiddlewareInterface|callable
      */
     public function compile($middleware)
     {

@@ -2,9 +2,9 @@
 
 namespace Stratify\Framework;
 
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Container\ContainerInterface;
 use Stratify\Framework\Middleware\MiddlewareFactory;
-use Stratify\Http\Middleware\Middleware;
 use Stratify\Http\Middleware\Pipe;
 use Stratify\Router\PrefixRouter;
 use Stratify\Router\Router;
@@ -24,7 +24,7 @@ if (! function_exists('Stratify\Framework\pipe')) {
             {
                 $this->middlewares = $middlewares;
             }
-            public function create(ContainerInterface $container, array $newSubMiddlewares) : Middleware
+            public function create(ContainerInterface $container, array $newSubMiddlewares) : MiddlewareInterface
             {
                 return new Pipe($newSubMiddlewares, $container->get('middleware_invoker'));
             }
@@ -48,11 +48,11 @@ if (! function_exists('Stratify\Framework\pipe')) {
             {
                 $this->routes = $routes;
             }
-            public function create(ContainerInterface $container, array $newSubMiddlewares) : Middleware
+            public function create(ContainerInterface $container, array $newSubMiddlewares) : MiddlewareInterface
             {
                 return new Router($newSubMiddlewares, $container);
             }
-            public function getSubMiddlewares()
+            public function getSubMiddlewares() : array
             {
                 return $this->routes;
             }
@@ -74,7 +74,7 @@ if (! function_exists('Stratify\Framework\pipe')) {
             {
                 $this->routes = $routes;
             }
-            public function create(ContainerInterface $container, array $newSubMiddlewares) : Middleware
+            public function create(ContainerInterface $container, array $newSubMiddlewares) : MiddlewareInterface
             {
                 return new PrefixRouter($newSubMiddlewares, $container->get('middleware_invoker'));
             }

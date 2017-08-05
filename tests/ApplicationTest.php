@@ -2,6 +2,7 @@
 
 namespace Stratify\Framework\Test;
 
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -32,7 +33,7 @@ class ApplicationTest extends TestCase
      */
     public function calls_middleware()
     {
-        $http = function (RequestInterface $request, callable $next) {
+        $http = function (RequestInterface $request, DelegateInterface $delegate) {
             return new SimpleResponse('Hello world!');
         };
         $this->runHttp($http);
@@ -45,8 +46,8 @@ class ApplicationTest extends TestCase
     public function calls_middleware_pipe()
     {
         $http = pipe([
-            function (RequestInterface $request, callable $next) {
-                $response = $next($request);
+            function (RequestInterface $request, DelegateInterface $delegate) {
+                $response = $delegate->process($request);
                 $response->getBody()->write(' world!');
                 return $response;
             },
@@ -122,8 +123,8 @@ class ApplicationTest extends TestCase
                     return new SimpleResponse('Home');
                 },
                 '/api/{resource}' => pipe([
-                    function (RequestInterface $request, callable $next) {
-                        $response = $next($request);
+                    function (RequestInterface $request, DelegateInterface $delegate) {
+                        $response = $delegate->process($request);
                         $response->getBody()->write("\nAuth check");
                         return $response;
                     },

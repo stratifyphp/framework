@@ -4,11 +4,11 @@ namespace Stratify\Framework;
 
 use DI\Kernel\Kernel;
 use function DI\value;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Container\ContainerInterface;
 use Silly\Application as CliApplication;
 use Stratify\Framework\Middleware\MiddlewareFactory;
 use Stratify\Http\Application as HttpApplication;
-use Stratify\Http\Middleware\Middleware;
 
 /**
  * @author Matthieu Napoli <matthieu@mnapoli.fr>
@@ -22,7 +22,7 @@ class Application extends Kernel
 
     /**
      * {@inheritdoc}
-     * @param callable|Middleware|MiddlewareFactory $httpStack
+     * @param callable|MiddlewareInterface|MiddlewareFactory $httpStack
      */
     public function __construct(array $modules = [], string $environment = 'prod', $httpStack = null)
     {

@@ -2,6 +2,8 @@
 
 namespace Stratify\Framework\Middleware;
 
+use Interop\Http\ServerMiddleware\DelegateInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Invoker\Invoker;
 use Invoker\ParameterResolver\NumericArrayResolver;
 use Psr\Container\ContainerInterface;
@@ -31,12 +33,21 @@ class ContainerBasedInvoker implements MiddlewareInvoker
         $this->container = $container;
     }
 
-    public function invoke($middleware, ServerRequestInterface $request, callable $next) : ResponseInterface
-    {
+    public function invoke(
+        $middleware,
+        ServerRequestInterface $request,
+        DelegateInterface $delegate
+    ) : ResponseInterface {
         if (! $this->invoker) {
             $this->invoker = new Invoker(new NumericArrayResolver, $this->container);
         }
 
-        return $this->invoker->call($middleware, [$request, $next]);
+        if ($middleware instanceof MiddlewareInterface) {
+            $callable = [$middleware, 'process'];
+        } else {
+            $callable = $middleware;
+        }
+
+        return $this->invoker->call($callable, [$request, $delegate]);
     }
 }
